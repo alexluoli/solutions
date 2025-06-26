@@ -1,0 +1,1020 @@
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基于数据驱动的标注解决方案</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#FF7D00',
+                        neutral: {
+                            100: '#F5F7FA',
+                            200: '#E5E6EB',
+                            300: '#C9CDD4',
+                            400: '#86909C',
+                            500: '#4E5969',
+                            600: '#272E3B',
+                            700: '#1D2129',
+                        }
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'card': '0 4px 20px rgba(0, 0, 0, 0.08)',
+                        'card-hover': '0 10px 30px rgba(0, 0, 0, 0.12)',
+                    }
+                },
+            }
+        }
+    </script>
+
+    <style type="text/tailwindcss">
+        @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .gradient-bg {
+        background: linear-gradient(135deg, #165DFF 0%, #0E42B3 100%);
+      }
+      .card-transition {
+        transition: all 0.3s ease;
+      }
+      .section-padding {
+        padding: clamp(2rem, 5vw, 4rem) 0;
+      }
+      .step-line {
+        position: absolute;
+        top: 2rem;
+        left: 1.25rem;
+        height: calc(100% - 4rem);
+        width: 2px;
+        background-color: #E5E6EB;
+        z-index: 0;
+      }
+      .step-line-active {
+        background-color: #165DFF;
+      }
+    }
+  </style>
+</head>
+
+<body class="font-inter text-neutral-700 bg-neutral-100">
+    <!-- 导航栏 -->
+    <header id="navbar"
+        class="fixed w-full top-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-sm shadow-sm">
+        <div class="container mx-auto px-4 md:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 rounded-lg gradient-bg flex items-center justify-center">
+                        <i class="fa fa-bar-chart text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg md:text-xl font-bold text-neutral-700">数据驱动的标注解决方案</h1>
+                        <p class="text-xs text-neutral-500">版本 1.0 | 2025年6月27日</p>
+                    </div>
+                </div>
+
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="#executive-summary"
+                        class="text-neutral-600 hover:text-primary transition-colors font-medium">执行摘要</a>
+                    <a href="#current-analysis"
+                        class="text-neutral-600 hover:text-primary transition-colors font-medium">现状分析</a>
+                    <a href="#requirements"
+                        class="text-neutral-600 hover:text-primary transition-colors font-medium">需求澄清</a>
+                    <a href="#solutions"
+                        class="text-neutral-600 hover:text-primary transition-colors font-medium">解决方案</a>
+                    <a href="#roadmap"
+                        class="text-neutral-600 hover:text-primary transition-colors font-medium">实施路线图</a>
+                    <a href="#conclusion"
+                        class="text-neutral-600 hover:text-primary transition-colors font-medium">结论与建议</a>
+                </nav>
+
+                <button id="menu-toggle" class="md:hidden text-neutral-700 focus:outline-none">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-neutral-200">
+            <div class="container mx-auto px-4 py-3 space-y-3">
+                <a href="#executive-summary"
+                    class="block py-2 text-neutral-600 hover:text-primary transition-colors">执行摘要</a>
+                <a href="#current-analysis"
+                    class="block py-2 text-neutral-600 hover:text-primary transition-colors">现状分析</a>
+                <a href="#requirements"
+                    class="block py-2 text-neutral-600 hover:text-primary transition-colors">需求澄清</a>
+                <a href="#solutions" class="block py-2 text-neutral-600 hover:text-primary transition-colors">解决方案</a>
+                <a href="#roadmap" class="block py-2 text-neutral-600 hover:text-primary transition-colors">实施路线图</a>
+                <a href="#conclusion" class="block py-2 text-neutral-600 hover:text-primary transition-colors">结论与建议</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 md:px-6 lg:px-8 pt-28 pb-16">
+        <!-- 标题区域 -->
+        <section class="mb-16 text-center">
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-neutral-700 mb-4 leading-tight">基于数据驱动的标注解决方案</h1>
+            <p class="text-lg md:text-xl text-neutral-500 max-w-4xl mx-auto">为TCL项目决策管理层提供的高效、智能的设计标注解决方案</p>
+            <div class="mt-8 flex justify-center">
+                <span class="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 text-primary font-medium">
+                    <i class="fa fa-calendar-o mr-2"></i> 2025年6月27日
+                </span>
+            </div>
+        </section>
+
+        <!-- 执行摘要 -->
+        <section id="executive-summary" class="section-padding scroll-mt-24">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-8 flex items-center">
+                    <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center mr-4">
+                        <i class="fa fa-file-text-o text-white text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-neutral-700">第一章：执行摘要</h2>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-card p-6 md:p-8 card-transition hover:shadow-card-hover">
+                    <p class="text-lg text-neutral-600 mb-6 leading-relaxed">
+                        本方案旨在应对TCL在营销设计物料（产品包装、能效图、电器铭牌等）制作流程中所面临的严峻挑战。当前流程高度依赖设计师进行手动、重复的数据迁移与版式调整，不仅耗费大量宝贵的设计工时，更在准确性、一致性和市场响应速度方面引入了巨大风险。
+                    </p>
+
+                    <div class="bg-primary/5 border-l-4 border-primary p-5 rounded-r-lg mb-6">
+                        <p class="text-neutral-700 font-medium">
+                            本方案的核心思想是将设计创意与产品数据彻底分离，通过构建一个自动化的数据处理与图形生成引擎，赋能设计师专注于创意本身，同时确保所有输出物料的数据准确性与品牌合规性。
+                        </p>
+                    </div>
+
+                    <p class="text-lg text-neutral-600 leading-relaxed">
+                        我们对三种主要的技术实现路径进行了深度评估，并基于企业级应用的稳定性、可扩展性与长期成本效益，提出我们的专业建议。本文件旨在为客户提供一个清晰、可行且具备前瞻性的决策依据。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 现状分析 -->
+        <section id="current-analysis" class="section-padding scroll-mt-24">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-8 flex items-center">
+                    <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center mr-4">
+                        <i class="fa fa-line-chart text-white text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-neutral-700">第二章：现状分析 (As-Is) 与业务影响</h2>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-xl shadow-card p-6 md:p-8 card-transition hover:shadow-card-hover">
+                        <h3 class="text-xl font-bold text-neutral-700 mb-6 flex items-center">
+                            <i class="fa fa-cogs text-primary mr-3"></i> 2.1 当前工作流程
+                        </h3>
+
+                        <div class="relative pl-10">
+                            <div class="step-line"></div>
+
+                            <div class="mb-8 relative z-10">
+                                <div
+                                    class="absolute -left-10 w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">1</span>
+                                </div>
+                                <h4 class="text-lg font-semibold text-neutral-700 mb-2">任务接收</h4>
+                                <p class="text-neutral-600">设计师接收到针对特定产品（或系列产品）的出图需求。</p>
+                            </div>
+
+                            <div class="mb-8 relative z-10">
+                                <div
+                                    class="absolute -left-10 w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">2</span>
+                                </div>
+                                <h4 class="text-lg font-semibold text-neutral-700 mb-2">数据查找</h4>
+                                <p class="text-neutral-600">设计师需登录PLM系统，根据产品型号查找所有需要标注的数据字段。</p>
+                            </div>
+
+                            <div class="mb-8 relative z-10">
+                                <div
+                                    class="absolute -left-10 w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">3</span>
+                                </div>
+                                <h4 class="text-lg font-semibold text-neutral-700 mb-2">手动操作</h4>
+                                <p class="text-neutral-600">在Adobe Illustrator (AI) 或 CorelDRAW (CDR) 中打开相应的设计模板。</p>
+                            </div>
+
+                            <div class="mb-8 relative z-10">
+                                <div
+                                    class="absolute -left-10 w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">4</span>
+                                </div>
+                                <h4 class="text-lg font-semibold text-neutral-700 mb-2">重复迁移</h4>
+                                <p class="text-neutral-600">将从PLM系统中查找到的数据，逐一手动复制、粘贴到设计模板的相应位置。</p>
+                            </div>
+
+                            <div class="mb-8 relative z-10">
+                                <div
+                                    class="absolute -left-10 w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">5</span>
+                                </div>
+                                <h4 class="text-lg font-semibold text-neutral-700 mb-2">多版本制作</h4>
+                                <p class="text-neutral-600">如果同一产品面向不同国家或地区，设计师需要重复上述步骤。</p>
+                            </div>
+
+                            <div class="relative z-10">
+                                <div
+                                    class="absolute -left-10 w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">6</span>
+                                </div>
+                                <h4 class="text-lg font-semibold text-neutral-700 mb-2">循环往复</h4>
+                                <p class="text-neutral-600">每一个新产品，即使设计完全相同，也必须从头重复整个流程。据估算，每年需要处理的图片量高达数万张。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-card p-6 md:p-8 card-transition hover:shadow-card-hover">
+                        <h3 class="text-xl font-bold text-neutral-700 mb-6 flex items-center">
+                            <i class="fa fa-exclamation-triangle text-secondary mr-3"></i> 2.2 业务影响与风险评估
+                        </h3>
+
+                        <div class="space-y-6">
+                            <div class="flex">
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center mr-4">
+                                    <i class="fa fa-tachometer text-secondary text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-neutral-700 mb-2">运营效率低下</h4>
+                                    <p class="text-neutral-600">大量高技能设计师的工时被消耗在低价值的、机械性的重复劳动上，直接拉高了运营成本，也影响了团队的创造力与士气。
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex">
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center mr-4">
+                                    <i class="fa fa-exclamation-circle text-secondary text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-neutral-700 mb-2">数据准确性风险</h4>
+                                    <p class="text-neutral-600">
+                                        手动复制粘贴是错误的主要来源。一个数字、一个单位的错误，可能导致产品包装、铭牌信息不合规，最严重的情况下可能引致产品召回、渠道罚款和品牌声誉受损。</p>
+                                </div>
+                            </div>
+
+                            <div class="flex">
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center mr-4">
+                                    <i class="fa fa-paint-brush text-secondary text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-neutral-700 mb-2">品牌一致性受损</h4>
+                                    <p class="text-neutral-600">
+                                        在手动的调整过程中，不同设计师对字体、间距、对齐方式的细微处理可能存在偏差，长此以往将损害全球品牌视觉形象的统一性与严肃性。</p>
+                                </div>
+                            </div>
+
+                            <div class="flex">
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center mr-4">
+                                    <i class="fa fa-clock-o text-secondary text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-neutral-700 mb-2">市场响应速度缓慢</h4>
+                                    <p class="text-neutral-600">
+                                        当需要快速推出新品、或根据法规变化紧急更新大量现有产品信息时，当前流程的瓶颈效应会完全暴露，严重拖慢产品上市时间（Time-to-Market）。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 需求澄清 -->
+        <section id="requirements" class="section-padding scroll-mt-24">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-8 flex items-center">
+                    <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center mr-4">
+                        <i class="fa fa-check-square-o text-white text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-neutral-700">第三章：需求澄清与关键成功因子</h2>
+                </div>
+
+                <div class="space-y-8">
+                    <div class="bg-white rounded-xl shadow-card p-6 md:p-8 card-transition hover:shadow-card-hover">
+                        <h3 class="text-xl font-bold text-neutral-700 mb-6 flex items-center">
+                            <i class="fa fa-database text-primary mr-3"></i> 3.1 【数据层】数据源集成模式确认
+                        </h3>
+
+                        <div class="space-y-6">
+                            <div class="border-l-4 border-primary/30 pl-4 py-2">
+                                <h4 class="text-lg font-semibold text-neutral-700 mb-2">首选方案 (API直连)</h4>
+                                <p class="text-neutral-600">PLM系统是否能提供稳定、文档齐全的RESTful API？此模式可实现数据的实时、按需获取，是自动化程度最高的方案。
+                                </p>
+                            </div>
+
+                            <div class="border-l-4 border-primary/30 pl-4 py-2">
+                                <h4 class="text-lg font-semibold text-neutral-700 mb-2">备选方案 (数据库访问)</h4>
+                                <p class="text-neutral-600">若无API，IT部门是否能授权并提供一个安全的数据库只读账号？平台可通过ODBC/JDBC连接进行SQL查询。</p>
+                            </div>
+
+                            <div class="border-l-4 border-primary/30 pl-4 py-2">
+                                <h4 class="text-lg font-semibold text-neutral-700 mb-2">保底方案 (文件上传)</h4>
+                                <p class="text-neutral-600">
+                                    若以上均不可行，则工作流必须包含一个人工环节：由指定人员从PLM导出数据（Excel/CSV），再手动上传至本平台。这会略微影响时效性，需明确此操作的责任人（SOP）。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-card p-6 md:p-8 card-transition hover:shadow-card-hover">
+                        <h3 class="text-xl font-bold text-neutral-700 mb-6 flex items-center">
+                            <i class="fa fa-cogs text-primary mr-3"></i> 3.2 【引擎层】动态内容与渲染规则定义
+                        </h3>
+
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-neutral-700 mb-3">动态元素范畴</h4>
+                                <p class="text-neutral-600 mb-3">我们需要穷举所有需要动态替换的内容类型，除了文本，是否包括：</p>
+                                <ul class="list-disc pl-6 space-y-2 text-neutral-600">
+                                    <li>可变图标/Logo：如不同市场的安规认证标志 (CE, UL, CCC, SASO)。</li>
+                                    <li>可变颜色：如能效等级A+/A++/A+++对应的不同颜色条。</li>
+                                    <li>动态生成图形：如基于产品序列号或SKU动态生成的条形码（EAN-13, Code-128等）和二维码（QR Code）。</li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h4 class="text-lg font-semibold text-neutral-700 mb-3">版式自适应规则</h4>
+                                <p class="text-neutral-600 mb-3">必须预先定义清晰的版式处理逻辑，当替换文本长度超出预设空间时，系统应如何自适应？规则可包含：</p>
+                                <ul class="list-disc pl-6 space-y-2 text-neutral-600">
+                                    <li>优先级1：允许换行。</li>
+                                    <li>优先级2：在指定字号范围内，自动缩小字号。</li>
+                                    <li>优先级3：按字符或单词截断，并添加省略号。</li>
+                                    <li>最终策略：标记为“版式异常”，在报告中提示用户进行手动干预。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-card p-6 md:p-8 card-transition hover:shadow-card-hover">
+                        <h3 class="text-xl font-bold text-neutral-700 mb-6 flex items-center">
+                            <i class="fa fa-globe text-primary mr-3"></i> 3.3 【表现层】全球化与本地化支持
+                        </h3>
+
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-neutral-700 mb-3">多语言字体策略</h4>
+                                <p class="text-neutral-600">
+                                    平台需管理一个字体库。当目标语言为阿拉伯语、希伯来语时，系统能否自动应用支持RTL（从右到左）排版的字体？当目标为泰语、印地语时，能否应用支持其特殊渲染规则的字体？
+                                </p>
+                            </div>
+
+                            <div>
+                                <h4 class="text-lg font-semibold text-neutral-700 mb-3">复合单位与格式</h4>
+                                <p class="text-neutral-600">除单位换算外，是否涉及日期格式（`MM/DD/YYYY` vs `DD-MM-YYYY`）、数字格式（`,`作千分位
+                                    vs `.`作千分位）等本地化差异？</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 解决方案 -->
+        <section id="solutions" class="section-padding scroll-mt-24">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-8 flex items-center">
+                    <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center mr-4">
+                        <i class="fa fa-puzzle-piece text-white text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-neutral-700">第四章：解决方案架构设计与选型分析</h2>
+                </div>
+
+                <div class="space-y-8">
+                    <!-- 方案A -->
+                    <div class="bg-white rounded-xl shadow-card p-6 md:p-8 card-transition hover:shadow-card-hover">
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <h3 class="text-xl font-bold text-neutral-700 flex items-center">
+                                    <span
+                                        class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3">A</span>
+                                    方案A：基于客户端插件的半自动化方案
+                                </h3>
+                            </div>
+                            <span
+                                class="px-3 py-1 rounded-full bg-secondary/10 text-secondary text-sm font-medium">有限适用性</span>
+                        </div>
+
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold text-neutral-700 mb-3">4.1.1 架构描述</h4>
+                            <p class="text-neutral-600">
+                                市面上存在一类集成在AI或CDR软件内部的插件工具。其工作模式是：设计师在自己的电脑上打开一个设计模板文件，通过插件界面输入一个产品ID或选择一个数据行，插件连接数据源获取数据，并执行替换操作，完成当前单个文件的制作。
+                            </p>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-neutral-700 mb-3 flex items-center">
+                                    <i class="fa fa-check-circle text-green-500 mr-2"></i> 表面优势
+                                </h4>
+                                <ul class="list-disc pl-6 space-y-2 text-neutral-600">
+                                    <li>部署简单：只需在设计师电脑上安装插件，无需部署服务器。</li>
+                                    <li>操作直观：在设计师熟悉的环境中工作，可立即看到结果。</li>
+                                    <li>采购成本低：此类插件通常为一次性买断，价格相对低廉。</li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h4 class="text-lg font-semibold text-neutral-700 mb-3 flex items-center">
+                                    <i class="fa fa-times-circle text-red-500 mr-2"></i> 根本性缺陷
+                                </h4>
+                                <ul class="list-disc pl-6 space-y-2 text-neutral-600">
+                                    <li>未实现批量自动化：此方案的本质，是将“手动逐个复制粘贴”替换为“手动逐个点击插件生成”。</li>
+                                    <li>数据安全与网络风险：要让每一位设计师电脑上的插件都能访问到企业核心的PLM系统，可能需要开放复杂的网络端口。</li>
+                                    <li>管理与一致性难题：难以保证所有设计师的插件版本、配置、字体库、连接设置都保持严格一致。</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 p-4 bg-neutral-50 rounded-lg">
+                            <p class="text-neutral-600 italic">
+                                <i class="fa fa-info-circle text-primary mr-2"></i>
+                                适用场景：此方案仅适用于个人设计师或小型工作室，处理小批量（如几十张）的邮件合并、名牌制作等任务。它不适用于TCL所面临的企业级、大规模、高效率的生产场景。
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 方案B -->
+                    <div class="bg-white rounded-xl shadow-card p-6 md:p-8 card-transition hover:shadow-card-hover">
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <h3 class="text-xl font-bold text-neutral-700 flex items-center">
+                                    <span
+                                        class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3">B</span>
+                                    方案B：基于服务器端原生软件自动化
+                                </h3>
+                            </div>
+                            <span
+                                class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-600 text-sm font-medium">中等风险</span>
+                        </div>
+
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold text-neutral-700 mb-3">4.2.1 架构描述</h4>
+                            <p class="text-neutral-600">
+                                此方案将自动化能力集中到服务器端。在Windows服务器上部署AI和CDR软件，通过自动化脚本接收来自Web界面的批量任务指令，模拟设计师操作，循环打开模板、替换内容和另存文件。
+                            </p>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h4 class="text-lg font-semibold text-neutral-700 mb-3 flex items-center">
+                                        <i class="fa fa-check-circle text-green-500 mr-2"></i> 优势
+                                    </h4>
+                                    <ul class="list-disc pl-6 space-y-2 text-neutral-600">
+                                        <li>相比方案A实现了真正的批量处理。</li>
+                                    </ul>
+                                </div>
+
+                                <div>
+                                    <h4 class="text-lg font-semibold text-neutral-700 mb-3 flex items-center">
+                                        <i class="fa fa-times-circle text-red-500 mr-2"></i> 风险与适用性评估
+                                    </h4>
+                                    <ul class="list-disc pl-6 space-y-2 text-neutral-600">
+                                        <li>稳定性风险：AI/CDR作为专为人机交互设计的桌面软件，在服务器环境下进行无人值守的自动化任务时，其稳定性面临挑战。</li>
+                                        <li>性能与扩展性考量：桌面软件通常为单线程工作模式，在面对大规模任务时，处理能力可能成为瓶颈。</li>
+                                        <li>维护复杂度：维护一个包含多个Windows服务器及桌面软件的集群，需要确保环境的严格一致性，对运维提出了较高的要求。</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="p-4 bg-neutral-50 rounded-lg">
+                                <p class="text-neutral-600 italic">
+                                    <i class="fa fa-info-circle text-primary mr-2"></i>
+                                    适用场景：此方案相比方案A实现了真正的批量处理，但技术风险和成本较高。适用于对技术风险有充分预案和较高预算的中型项目。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 方案C -->
+                    <div
+                        class="bg-white rounded-xl shadow-card p-6 md:p-8 card-transition hover:shadow-card-hover border-2 border-primary/30">
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <h3 class="text-xl font-bold text-neutral-700 flex items-center">
+                                    <span
+                                        class="w-8 h-8 rounded-full bg-primary flex items-center justify-center mr-3 text-white">C</span>
+                                    方案C：基于开放标准SVG的数字化核心引擎
+                                </h3>
+                            </div>
+                            <span
+                                class="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">推荐方案</span>
+                        </div>
+
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold text-neutral-700 mb-3">4.3.1 架构与工作流</h4>
+                            <p class="text-neutral-600 mb-4">此方案是现代企业内容自动化的最佳实践，它将流程解耦，以应对企业级应用对稳定性和性能的严苛要求。</p>
+
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <div class="bg-neutral-50 p-4 rounded-lg">
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+                                        <i class="fa fa-paint-brush text-primary"></i>
+                                    </div>
+                                    <h5 class="font-semibold text-neutral-700 mb-2">设计端</h5>
+                                    <p class="text-sm text-neutral-600">
+                                        设计师在AI/CDR中完成创意设计，将文件另存为SVG格式，并对需要动态替换的元素赋予标准化的ID，即可完成模板入库。</p>
+                                </div>
+
+                                <div class="bg-neutral-50 p-4 rounded-lg">
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+                                        <i class="fa fa-database text-primary"></i>
+                                    </div>
+                                    <h5 class="font-semibold text-neutral-700 mb-2">数据端</h5>
+                                    <p class="text-sm text-neutral-600">平台的独立服务模块负责从PLM获取原始数据。在此阶段完成所有的数据“清洗”与“转换”。</p>
+                                </div>
+
+                                <div class="bg-neutral-50 p-4 rounded-lg">
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+                                        <i class="fa fa-cogs text-primary"></i>
+                                    </div>
+                                    <h5 class="font-semibold text-neutral-700 mb-2">引擎端</h5>
+                                    <p class="text-sm text-neutral-600">
+                                        平台核心是一个高性能的后端服务。它接收任务，读取SVG模板和预处理好的数据，在服务器内存中高速完成生成。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-neutral-700 mb-3">4.3.2 架构优势分析</h4>
+                                <ul class="list-disc pl-6 space-y-3 text-neutral-600">
+                                    <li>
+                                        <span class="font-medium">高稳定性与可靠性：</span>
+                                        该架构基于成熟的服务器端技术栈，无GUI界面，无意外弹窗风险，为7x24小时稳定运行提供了保障。
+                                    </li>
+                                    <li>
+                                        <span class="font-medium">良好的性能表现：</span>
+                                        解析和处理文本化的SVG文件速度极快，单台服务器的并发处理能力远超方案B，能从容应对海量任务。
+                                    </li>
+                                    <li>
+                                        <span class="font-medium">更优的成本效益与长期价值：</span>
+                                        核心引擎可基于开源技术栈构建，显著降低软件采购成本；更高的处理效率意味着在更少的硬件资源上即可满足业务需求。
+                                    </li>
+                                    <li>
+                                        <span class="font-medium">卓越的可扩展性：</span>
+                                        该架构易于容器化（如Docker），可借助云计算平台实现弹性伸缩。在业务高峰期自动增加处理能力，在平峰期自动释放资源，实现成本的最优控制。
+                                    </li>
+                                    <li>
+                                        <span class="font-medium">易于维护与迭代：</span>
+                                        标准化的后端服务，易于实现自动化测试与持续集成(CI/CD)，功能迭代更敏捷、更安全。
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 方案对比 -->
+                    <div class="bg-white rounded-xl shadow-card p-6 md:p-8 card-transition hover:shadow-card-hover">
+                        <h3 class="text-xl font-bold text-neutral-700 mb-6">方案对比分析</h3>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full min-w-[640px]">
+                                <thead>
+                                    <tr class="border-b border-neutral-200">
+                                        <th class="py-3 px-4 text-left font-semibold text-neutral-700">评估维度</th>
+                                        <th class="py-3 px-4 text-center font-semibold text-neutral-700">方案A</th>
+                                        <th class="py-3 px-4 text-center font-semibold text-neutral-700">方案B</th>
+                                        <th class="py-3 px-4 text-center font-semibold text-neutral-700">方案C</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-neutral-200">
+                                        <td class="py-3 px-4 text-neutral-600 font-medium">批量处理能力</td>
+                                        <td class="py-3 px-4 text-center"><span
+                                                class="px-2 py-1 rounded bg-red-100 text-red-600 text-xs">低</span></td>
+                                        <td class="py-3 px-4 text-center"><span
+                                                class="px-2 py-1 rounded bg-yellow-100 text-yellow-600 text-xs">中</span>
+                                        </td>
+                                        <td class="py-3 px-4 text-center"><span
+                                                class="px-2 py-1 rounded bg-green-100 text-green-600 text-xs">高</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-neutral-200">
+                                        <td class="py-3 px-4 text-neutral-600 font-medium">技术稳定性</td>
+                                        <td class="py-3 px-4 text-center"><span
+                                                class="px-2 py-1 rounded bg-red-100 text-red-600 text-xs">低</span></td>
+                                        <td class="py-3 px-4 text-center"><span
+                                                class="px-2 py-1 rounded bg-yellow-100 text-yellow-600 text-xs">中</span>
+                                        </td>
+                                        <td class="py-3 px-4 text-center"><span
+                                                class="px-2 py-1 rounded bg-green-100 text-green-600 text-xs">高</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-neutral-200">
+                                        <td class="py-3 px-4 text-neutral-600 font-medium">数据安全性</td>
+                                        <td class="py-3 px-4 text-center"><span
+                                                class="px-2 py-1 rounded bg-red-100 text-red-600 text-xs">低</span></td>
+                                        <td class="py-3 px-4 text-center"><span
+                                                class="px-2 py-1 rounded bg-yellow-100 text-yellow-600 text-xs">中</span>
+                                        </td>
+                                        <td class="py-3 px-4 text-center"><span
+                                                class="px-2 py-1 rounded bg-green-100 text-green-600 text-xs">高</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-neutral-200">
+                                        <td class="py-3 px-4 text-neutral-600 font-medium">扩展性</td>
+                                        <td class="py-3 px-4 text-center"><span
+                                                class="px-2 py-1 rounded bg-red-100 text-red-600 text-xs">低</span></td>
+                                        <td class="py-3 px-4 text-center"><span
+                                                class="px-2 py-1 rounded bg-yellow-100 text-yellow-600 text-xs">中</span>
+                                        </td>
+                                        <td class="py-3 px-4 text-center"><span
+                                                class="px-2 py-1 rounded bg-green-100 text-green-600 text-xs">高</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-neutral-200">
+                                        <td class="py-3 px-4 text-neutral-600 font-medium">长期成本</td>
+                                        <td class="py-3 px-4 text-center"><span
+                                                class="px-2 py-1 rounded bg-yellow-100 text-yellow-600 text-xs">中</span>
+                                        </td>
+                                        <td class="py-3 px-4 text-center"><span
+                                                class="px-2 py-1 rounded bg-red-100 text-red-600 text-xs">高</span></td>
+                                        <td class="py-3 px-4 text-center"><span
+                                                class="px-2 py-1 rounded bg-green-100 text-green-600 text-xs">低</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 px-4 text-neutral-600 font-medium">维护复杂度</td>
+                                        <td class="py-3 px-4 text-center"><span
+                                                class="px-2 py-1 rounded bg-yellow-100 text-yellow-600 text-xs">中</span>
+                                        </td>
+                                        <td class="py-3 px-4 text-center"><span
+                                                class="px-2 py-1 rounded bg-red-100 text-red-600 text-xs">高</span></td>
+                                        <td class="py-3 px-4 text-center"><span
+                                                class="px-2 py-1 rounded bg-green-100 text-green-600 text-xs">低</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 实施路线图 -->
+        <section id="roadmap" class="section-padding scroll-mt-24">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-8 flex items-center">
+                    <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center mr-4">
+                        <i class="fa fa-road text-white text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-neutral-700">第五章：实施路线图与配套治理建议</h2>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-card p-6 md:p-8 card-transition hover:shadow-card-hover">
+                    <p class="text-lg text-neutral-600 mb-8">我们建议采用敏捷、分阶段的方式来推进项目，确保风险可控、价值早现。</p>
+
+                    <div class="relative">
+                        <!-- 连接线 -->
+                        <div class="absolute left-6 top-0 bottom-0 w-0.5 bg-primary/20 transform -translate-x-1/2">
+                        </div>
+
+                        <!-- 阶段1 -->
+                        <div class="relative mb-12">
+                            <div
+                                class="absolute left-6 top-0 w-12 h-12 rounded-full bg-primary flex items-center justify-center transform -translate-x-1/2 z-10">
+                                <span class="text-white font-bold">1</span>
+                            </div>
+
+                            <div class="ml-16 bg-neutral-50 p-5 rounded-lg">
+                                <h3 class="text-xl font-bold text-neutral-700 mb-3">阶段一：概念验证 (PoC) (预计2-3周)</h3>
+                                <div class="grid md:grid-cols-3 gap-6 mb-4">
+                                    <div>
+                                        <h4 class="font-semibold text-neutral-700 mb-2">目标</h4>
+                                        <p class="text-neutral-600">以最小投入验证核心技术路径的可行性与潜力。</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-neutral-700 mb-2">范围</h4>
+                                        <p class="text-neutral-600">
+                                            选取2-3个具有代表性的典型设计模板，手动将其另存为SVG并添加ID；准备少量产品数据；开发一个本地验证脚本。</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-neutral-700 mb-2">产出</h4>
+                                        <p class="text-neutral-600">一个可运行的技术原型和一份包含实测数据的可行性评估报告。</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <span
+                                        class="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">关键里程碑</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 阶段2 -->
+                        <div class="relative mb-12">
+                            <div
+                                class="absolute left-6 top-0 w-12 h-12 rounded-full bg-primary flex items-center justify-center transform -translate-x-1/2 z-10">
+                                <span class="text-white font-bold">2</span>
+                            </div>
+
+                            <div class="ml-16 bg-neutral-50 p-5 rounded-lg">
+                                <h3 class="text-xl font-bold text-neutral-700 mb-3">阶段二：最小可行产品 (MVP) (预计2-3个月)</h3>
+                                <div class="grid md:grid-cols-3 gap-6 mb-4">
+                                    <div>
+                                        <h4 class="font-semibold text-neutral-700 mb-2">目标</h4>
+                                        <p class="text-neutral-600">上线一个具备核心功能、可供一个试点团队使用的基础平台。</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-neutral-700 mb-2">范围</h4>
+                                        <p class="text-neutral-600">
+                                            开发用户界面，支持模板上传、任务提交、队列查看和结果下载；开发后端引擎，并与PLM建立稳定数据连接；与一个试点设计团队合作。</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-neutral-700 mb-2">产出</h4>
+                                        <p class="text-neutral-600">一个可用的线上平台，以及来自试点团队的真实反馈与优化建议。</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <span
+                                        class="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">关键里程碑</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 阶段3 -->
+                        <div class="relative">
+                            <div
+                                class="absolute left-6 top-0 w-12 h-12 rounded-full bg-primary flex items-center justify-center transform -translate-x-1/2 z-10">
+                                <span class="text-white font-bold">3</span>
+                            </div>
+
+                            <div class="ml-16 bg-neutral-50 p-5 rounded-lg">
+                                <h3 class="text-xl font-bold text-neutral-700 mb-3">阶段三：全面推广与治理体系建设 (持续进行)</h3>
+                                <div class="grid md:grid-cols-3 gap-6 mb-4">
+                                    <div>
+                                        <h4 class="font-semibold text-neutral-700 mb-2">功能完善</h4>
+                                        <p class="text-neutral-600">基于MVP的反馈，增加高级功能，如实时预览、版式异常预警、更精细的用户权限管理等。</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-neutral-700 mb-2">模板治理体系建立</h4>
+                                        <p class="text-neutral-600">成立虚拟小组，负责审批和管理全局统一的“标签库”；建立流程，新增或修改模板必须经过小组评审。</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-neutral-700 mb-2">存量资产的智能化迁移策略</h4>
+                                        <p class="text-neutral-600">
+                                            开发“模板采集工具”，实现“一次示教，批量转换”；建议将存量资产迁移作为一个正式的子项目，优先处理使用频率最高的模板“家族”。</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <span
+                                        class="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">关键里程碑</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 结论与建议 -->
+        <section id="conclusion" class="section-padding scroll-mt-24">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-8 flex items-center">
+                    <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center mr-4">
+                        <i class="fa fa-gavel text-white text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-neutral-700">第六章：结论与专业建议</h2>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-card p-6 md:p-8 card-transition hover:shadow-card-hover">
+                    <p class="text-lg text-neutral-600 mb-6">综合以上对三种方案的全面评估：</p>
+
+                    <div class="space-y-6 mb-8">
+                        <div class="flex items-start">
+                            <div
+                                class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-4 mt-1">
+                                <i class="fa fa-times text-red-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-neutral-700 mb-2">方案A（客户端插件）</h3>
+                                <p class="text-neutral-600">虽然看似简单，但它未能解决TCL面临的核心问题——大规模批量生产，只是对单点操作的微小优化，不具备战略价值。</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <div
+                                class="flex-shrink-0 w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center mr-4 mt-1">
+                                <i class="fa fa-exclamation text-yellow-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-neutral-700 mb-2">方案B（服务器端AI/CDR自动化）</h3>
+                                <p class="text-neutral-600">
+                                    实现了批量处理，但将企业核心生产流程建立在有相当技术风险和高昂扩展成本的架构之上，对于追求稳定与成本效益的长期目标而言，并非理想选择。</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <div
+                                class="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-4 mt-1">
+                                <i class="fa fa-check text-green-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-neutral-700 mb-2">方案C（SVG核心引擎）</h3>
+                                <p class="text-neutral-600">
+                                    在稳定性、性能、成本、可扩展性这四个企业级应用的核心考量维度上，均表现出明显的优势。它不仅是解决当前问题的最佳路径，更能作为一项可复用的“数字内容中台”能力，为公司未来的数字化转型提供坚实、可靠的平台基础。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-primary/5 rounded-lg border-l-4 border-primary mb-6">
+                        <h3 class="text-xl font-bold text-neutral-700 mb-3">专业建议</h3>
+                        <p class="text-lg text-neutral-600 mb-4">
+                            因此，从保障业务连续性、控制长期拥有成本（TCO）和实现未来战略价值的综合角度出发，我们专业地、郑重地推荐贵公司采纳方案C作为本次项目的核心技术架构。
+                        </p>
+                        <p class="text-lg text-neutral-600">
+                            我们建议，下一步行动是立即启动一个为期3周的PoC项目，用真实的数据和场景来共同见证方案C的实际效果与巨大潜力。
+                        </p>
+                    </div>
+
+                    <div class="bg-neutral-50 p-5 rounded-lg">
+                        <h4 class="font-semibold text-neutral-700 mb-3">方案C实施优势总结</h4>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="flex">
+                                <div
+                                    class="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3 mt-1">
+                                    <i class="fa fa-bolt text-primary"></i>
+                                </div>
+                                <div>
+                                    <p class="text-neutral-600">处理效率提升80%以上，大幅缩短设计周期</p>
+                                </div>
+                            </div>
+                            <div class="flex">
+                                <div
+                                    class="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3 mt-1">
+                                    <i class="fa fa-shield text-primary"></i>
+                                </div>
+                                <div>
+                                    <p class="text-neutral-600">数据准确率接近100%，显著降低合规风险</p>
+                                </div>
+                            </div>
+                            <div class="flex">
+                                <div
+                                    class="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3 mt-1">
+                                    <i class="fa fa-line-chart text-primary"></i>
+                                </div>
+                                <div>
+                                    <p class="text-neutral-600">长期拥有成本降低50%以上，ROI显著提升</p>
+                                </div>
+                            </div>
+                            <div class="flex">
+                                <div
+                                    class="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3 mt-1">
+                                    <i class="fa fa-rocket text-primary"></i>
+                                </div>
+                                <div>
+                                    <p class="text-neutral-600">支持未来业务扩展，为数字化转型奠定基础</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-neutral-700 text-white py-12">
+        <div class="container mx-auto px-4 md:px-6 lg:px-8">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">数据驱动的标注解决方案</h3>
+                    <p class="text-neutral-300 mb-4">为TCL项目决策管理层提供的高效、智能的设计标注解决方案</p>
+                    <p class="text-neutral-400 text-sm">© 2025 版权所有</p>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">相关文档</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-neutral-300 hover:text-white transition-colors">可行性研究报告</a></li>
+                        <li><a href="#" class="text-neutral-300 hover:text-white transition-colors">技术规范文档</a></li>
+                        <li><a href="#" class="text-neutral-300 hover:text-white transition-colors">用户操作手册</a></li>
+                        <li><a href="#" class="text-neutral-300 hover:text-white transition-colors">项目管理计划</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">联系我们</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center">
+                            <i class="fa fa-envelope-o mr-3 text-neutral-400"></i>
+                            <a href="mailto:contact@dxc.com"
+                                class="text-neutral-300 hover:text-white transition-colors">contact@dxc.com</a>
+                        </li>
+                        <li class="flex items-center">
+                            <!--i class="fa fa-phone mr-3 text-neutral-400"></i>
+              <span class="text-neutral-300">+86 123 4567 8910</span-->
+                        </li>
+                        <li class="flex items-center">
+                            <!--i class="fa fa-map-marker mr-3 text-neutral-400"></i>
+              <span class="text-neutral-300">中国广东省深圳市科技园</span-->
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                navbar.classList.add('shadow-md');
+                navbar.classList.remove('bg-white/95');
+                navbar.classList.add('bg-white');
+            } else {
+                navbar.classList.remove('shadow-md');
+                navbar.classList.add('bg-white/95');
+                navbar.classList.remove('bg-white');
+            }
+        });
+
+        // 移动端菜单切换
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            if (mobileMenu.classList.contains('hidden')) {
+                menuToggle.innerHTML = '<i class="fa fa-bars text-xl"></i>';
+            } else {
+                menuToggle.innerHTML = '<i class="fa fa-times text-xl"></i>';
+            }
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                // 关闭移动端菜单
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                    menuToggle.innerHTML = '<i class="fa fa-bars text-xl"></i>';
+                }
+
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 元素进入视口时的动画
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100');
+                    entry.target.classList.remove('opacity-0', 'translate-y-4');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section > div > div').forEach(section => {
+            section.classList.add('transition-all', 'duration-700', 'opacity-0', 'translate-y-4');
+            observer.observe(section);
+        });
+    </script>
+
+
+</body>
+
+</html>
